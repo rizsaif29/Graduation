@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Kelulusan - MI Miftahul Huda Guyangan</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            margin: 20px;
+        }
+        .header {
+            border-bottom: 2px solid #008f39;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            color: #008f39;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .header p {
+            margin: 0;
+            color: #666;
+        }
+        
+        /* Area Hitung Mundur */
+        #countdown-area {
+            background-color: #e8f5e9;
+            border: 1px dashed #008f39;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #countdown-area h2 {
+            margin-top: 0;
+            color: #d32f2f;
+            font-size: 18px;
+        }
+        #timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #008f39;
+            letter-spacing: 2px;
+        }
+
+        /* Area Pencarian (Disembunyikan sebelum waktunya) */
+        #search-area {
+            display: none; 
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #008f39;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background-color: #006b2b;
+        }
+
+        /* Hasil Pencarian */
+        #hasil-area {
+            margin-top: 25px;
+            text-align: left;
+        }
+        .card {
+            background-color: #fafafa;
+            border-left: 5px solid #008f39;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #008f39;
+        }
+        .card p {
+            margin: 5px 0;
+        }
+        .lulus {
+            font-weight: bold;
+            color: #fff;
+            background-color: #008f39;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .error-msg {
+            color: #d32f2f;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Pengumuman Kelulusan</h1>
+        <p>MI Miftahul Huda Guyangan - Tahun 2026</p>
+    </div>
+
+    <!-- Tampilan Sebelum Tanggal Buka -->
+    <div id="countdown-area">
+        <h2>Pengumuman Belum Dibuka!</h2>
+        <p>Halaman ini baru dapat diakses pada <strong>2 Juni 2026</strong>.</p>
+        <div id="timer">Memuat waktu...</div>
+    </div>
+
+    <!-- Tampilan Pencarian Siswa -->
+    <div id="search-area">
+        <div class="form-group">
+            <label for="namaSiswa">Cek Kelulusan Berdasarkan Nama Siswa:</label>
+            <input type="text" id="namaSiswa" placeholder="Masukkan nama lengkap siswa...">
+        </div>
+        <button onclick="cariSiswa()">Cari Data Siswa</button>
+
+        <div id="hasil-area"></div>
+    </div>
+</div>
+
+<script>
+    // 1. Data Siswa MI Miftahul Huda Guyangan (Total 22 Siswa)
+    const dataSiswa = [
+        { no: "11-20-187-01", name: "AFIKA MARTA FITRIANA" },
+        { no: "11-20-187-02", name: "ANDIKA SAPUTRA" },
+        { no: "11-20-187-03", name: "ARJUNA AR RIZQI" },
+        { no: "11-20-187-04", name: "AVIKA FADILLAH" },
+        { no: "11-20-187-05", name: "BAGUS DWI PRATAMA PUTRA" },
+        { no: "11-20-187-06", name: "DESKA FEBRIANO VIKENZO" },
+        { no: "11-20-187-07", name: "DICKY ALFIAN MUSAFA" },
+        { no: "11-20-187-08", name: "DZAKIRA KARIMA BILQIS" },
+        { no: "11-20-187-09", name: "EDO DWI SAPUTRA" },
+        { no: "11-20-187-10", name: "FADHIL MUHAMMAD" },
+        { no: "11-20-187-11", name: "FIKRIA AKMAL ASSHOFI" },
+        { no: "11-20-187-12", name: "GAMMA BRILIANT SYAPUTRA" },
+        { no: "11-20-187-13", name: "LANGIT DWI ALVIANO" },
+        { no: "11-20-187-14", name: "MAURA DWI ALIYANI" },
+        { no: "11-20-187-15", name: "MUHAMMAD AFRIZAL EVAN NUGROHO" },
+        { no: "11-20-187-16", name: "MUHAMMAD FADLAN IRSYAD" },
+        { no: "11-20-187-17", name: "MUHAMMAD ROZIF MAHLUL AZAM" },
+        { no: "11-20-187-18", name: "PUTRI AYU AZALIA" },
+        { no: "11-20-187-19", name: "RAFAELIANSYAH FAHMI ANGGARA" },
+        { no: "11-20-187-20", name: "RIFANA MEYKA SYAHWA" },
+        { no: "11-20-187-21", name: "AHMAD BAGAS DWI RAMDHANI" },
+        { no: "11-20-187-22", name: "VANIA CARISSA SALSABILLA" }
+    ];
+
+    // 2. Sistem Hitung Mundur (Countdown) ke 2 Juni 2026, Pukul 00:00:00
+    const targetDate = new Date("June 2, 2026 00:00:00").getTime();
+
+    const x = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        // Jika waktu sudah lewat (Tanggal 2 Juni 2026 tiba)
+        if (distance < 0) {
+            clearInterval(x);
+            // Sembunyikan countdown, tampilkan form pencarian
+            document.getElementById("countdown-area").style.display = "none";
+            document.getElementById("search-area").style.display = "block";
+        } else {
+            // Kalkulasi Hari, Jam, Menit, Detik
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Tampilkan hasil hitung mundur
+            document.getElementById("timer").innerHTML = 
+                days + " Hari " + hours + " Jam " + minutes + " Menit " + seconds + " Detik";
+        }
+    }, 1000);
+
+    // 3. Fungsi Pencarian Siswa
+    function cariSiswa() {
+        // Ambil input dan ubah menjadi huruf besar (kapital)
+        const inputNama = document.getElementById("namaSiswa").value.toUpperCase().trim();
+        const hasilArea = document.getElementById("hasil-area");
+        
+        // Bersihkan hasil sebelumnya
+        hasilArea.innerHTML = "";
+
+        // Peringatan jika input kosong
+        if (inputNama === "") {
+            hasilArea.innerHTML = "<p class='error-msg'>Silakan masukkan nama siswa terlebih dahulu!</p>";
+            return;
+        }
+
+        // Cari kecocokan sebagian (contoh: ketik "AFIKA" akan memunculkan "AFIKA MARTA FITRIANA")
+        const siswaDitemukan = dataSiswa.filter(siswa => siswa.name.includes(inputNama));
+
+        if (siswaDitemukan.length > 0) {
+            let htmlHasil = "";
+            // Loop jika ada siswa bernama mirip (misal: "MUHAMMAD")
+            siswaDitemukan.forEach(siswa => {
+                htmlHasil += `
+                <div class="card">
+                    <h3>${siswa.name}</h3>
+                    <p><strong>Nomor Ujian:</strong> ${siswa.no}</p>
+                    <p><strong>Keterangan:</strong> <br><span class="lulus">LULUS</span></p>
+                </div>
+                `;
+            });
+            hasilArea.innerHTML = htmlHasil;
+        } else {
+            // Jika nama tidak ada di database
+            hasilArea.innerHTML = "<p class='error-msg'>Nama siswa tidak ditemukan. Pastikan ejaan nama sudah benar.</p>";
+        }
+    }
+</script>
+
+</body>
+</html>
